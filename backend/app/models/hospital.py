@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 #requries base from .base. Why? idk something to do with the ORM workings
 class Hospital(Base):
     #Sets the table name for hospital model in the database proper
-    __table__name = "hospitals"
+    __tablename__ = "hospitals"
 
     #Defines the attributes in hospitals
     #id, name, location_region, capacity, supervisor_id || No foreign key in this one afaik

@@ -6,7 +6,7 @@ from enum import Enum
 
 class EquipmentStatus(str, Enum):
     AVAILABLE = "Available"
-    IN-USE = "In-Use"
+    IN_USE = "In-Use"
     MAINTENANCE = "Maintenance"
     OFFLINE = "Offline"
 
@@ -17,7 +17,7 @@ class OrderPriority(str, Enum):
 
 class OrderStatus(str, Enum):
     PENDING = "Pending"
-    IN-PROGRESS = "In-Progress"
+    IN_PROGRESS = "In-Progress"
     COMPLETED = "Completed"
     FAILED = "Failed"
 

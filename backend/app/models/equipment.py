@@ -2,17 +2,16 @@
 Equipment Model - Skipping plain python version to jump into the SQLAlchemy ORM(object relational mapping) version
 """
 
-
+from __future__ import annotations
 
 from decimal import Decimal
 from typing import TYPE_CHECKING
-from __future__ import annotations
 
 from sqlalchemy import CheckConstraint, ForeignKey, Numeric, String, Integer
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models import Base
+from .base import Base
 from app.models import EquipmentStatus
 
 if TYPE_CHECKING:
@@ -25,7 +24,7 @@ class Equipment(Base):
     #equipment has id, serial_number, model, status, charge_level, facility_id
 
     #Table level constraint for charge_level 0-100
-    __table_args__ = (CheckConstraint("Battery_level BETWEEN 0 and 100", name = "charge_level_range"),)
+    __table_args__ = (CheckConstraint("charge_level BETWEEN 0 and 100", name = "charge_level_range"),)
 
     #Columns
     id: Mapped[int] = mapped_column(primary_key = True)
@@ -37,7 +36,7 @@ class Equipment(Base):
         values_callable = lambda enum_cls: [member.value for member in enum_cls],
     ), default= EquipmentStatus.AVAILABLE)
     charge_level: Mapped[Decimal] = mapped_column(Numeric(5,2))
-    facility_id: Mapped[int] = mapped_column(Integer, ForeignKey("hospitals.id"))
+    hospital_id: Mapped[int] = mapped_column(Integer, ForeignKey("hospitals.id"))
 
     #Do relationships here
     hospital: Mapped["Hospital"] = relationship(back_populates="equipments")
