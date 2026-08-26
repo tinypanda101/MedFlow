@@ -14,9 +14,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
 if TYPE_CHECKING:
-    #Add the other models in here that are assosicated with hospital
-    #RoboPulse example is: from .operator import Operator
-    None
+    from .equipment import Equipment
+
 
 #requries base from .base. Why? idk something to do with the ORM workings
 class Hospital(Base):
@@ -37,6 +36,8 @@ class Hospital(Base):
 
     #Creates the relationships with other tables
     #Will come back when others are created but this connects to equipment and maybe a technician table
+    equipments: Mapped[list["Equipment"]] = relationship(back_populates="hospital")
+
 
     #its a ToString method but I am unsure the purpose of it?
     def __repr__(self) -> str:

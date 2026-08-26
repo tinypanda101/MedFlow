@@ -5,12 +5,19 @@ Equipment Model - Skipping plain python version to jump into the SQLAlchemy ORM(
 
 
 from decimal import Decimal
+from typing import TYPE_CHECKING
+from __future__ import annotations
 
 from sqlalchemy import CheckConstraint, ForeignKey, Numeric, String, Integer
+from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base
+from app.models import Base
+from app.models import EquipmentStatus
 
+if TYPE_CHECKING:
+    from .hospital import Hospital
+    from .work_order import Work_Order
 
 class Equipment(Base):
     __tablename__ = "equipment"
@@ -24,13 +31,21 @@ class Equipment(Base):
     id: Mapped[int] = mapped_column(primary_key = True)
     serial_number: Mapped[str] = mapped_column(String(50), unique= True)
     model: Mapped[str] = mapped_column(String(100))
-    #status is an enum need to set that up
+    status: Mapped[EquipmentStatus] = mapped_column(SQLEnum(
+        EquipmentStatus, name = "equipment_status",
+        #definition for how enum values are stored in the database, we are using string representation of enum members
+        values_callable = lambda enum_cls: [member.value for member in enum_cls],
+    ), default= EquipmentStatus.AVAILABLE)
     charge_level: Mapped[Decimal] = mapped_column(Numeric(5,2))
     facility_id: Mapped[int] = mapped_column(Integer, ForeignKey("hospitals.id"))
 
     #Do relationships here
-
+    hospital: Mapped["Hospital"] = relationship(back_populates="equipments")
+    work_order: Mapped["Work_Order"] = relationship(back_populates="equipments")
+    #Future methods go here
 
 
     #__repr__ here
+    def __repr__(self) -> str:                                                                                  #Remember Enum = .value
+        return (f"Equipment(Serial = {self.serial_number!r}, Model = {self.model!r}, Charge = {self.charge_level}, Status = {self.status.value})")
  

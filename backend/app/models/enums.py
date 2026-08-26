@@ -1,0 +1,27 @@
+"""
+ Enums - Basically helps reduce typos
+"""
+
+from enum import Enum
+
+class EquipmentStatus(str, Enum):
+    AVAILABLE = "Available"
+    IN-USE = "In-Use"
+    MAINTENANCE = "Maintenance"
+    OFFLINE = "Offline"
+
+class OrderPriority(str, Enum):
+    LOW = "Low"
+    MEDIUM = "Medium"
+    CRITICAL = "Critical"
+
+class OrderStatus(str, Enum):
+    PENDING = "Pending"
+    IN-PROGRESS = "In-Progress"
+    COMPLETED = "Completed"
+    FAILED = "Failed"
+
+class UserRole(str, Enum):
+    CLINICAL_ADMIN = "Clinical_Admin"
+    FIELD_TECHNICIAN = "Field_Technician"
+    AUDITOR = "Auditor"
