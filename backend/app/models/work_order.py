@@ -14,7 +14,7 @@ from .enums import OrderStatus, OrderPriority
 
 if TYPE_CHECKING:
     from .service_report import Service_Report
-    from .hospital import Hospital
+    from .technician import Technician
     from .equipment import Equipment
 
 class Work_Order(Base):
@@ -33,15 +33,17 @@ class Work_Order(Base):
       name = "order_status",
       values_callable = lambda enum_cls: [member.value for member in enum_cls],  
         ),
-        default= OrderStatus=PENDING,
+        default= OrderStatus.PENDING,
     )
-    equipment_id = Mapped[int] = mapped_column(Integer, ForeignKey("equipments.id"))
-    technician_id = Mapped[int] = mapped_column(Integer, ForeignKey("technicians.id"))
+    equipment_id: Mapped[int] = mapped_column(Integer, ForeignKey("equipment.id"))
+    technician_id: Mapped[int] = mapped_column(Integer, ForeignKey("technicians.id"))
+
 
     #relationships here
-    hospital: Mapped["Hospital"] = relationship(back_populates="work_orders")
+    
     equipment: Mapped["Equipment"] = relationship(back_populates="work_orders")
-    service_report: Mapped[list["Service_Report"]] = relationship(back_populates="work_order")
+    technician: Mapped["Technician"] = relationship(back_populates="work_orders")
+    service_reports: Mapped[list["Service_Report"]] = relationship(back_populates="work_order")
 
     def __repr__(self) -> str:
         return (f"Work Order(id = {self.id}, title = {self.title!r}, priority = {self.priority.value}, status = {self.status.value} )")

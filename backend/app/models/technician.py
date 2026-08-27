@@ -28,7 +28,7 @@ class Technician(Base):
 
     #relationships
     hospital: Mapped["Hospital"] = relationship(back_populates="technicians")
-    work_order: Mapped["Work_Order"] = relationship(back_populates="technician")
+    work_orders: Mapped[list["Work_Order"]] = relationship(back_populates="technician")
 
     def __repr__(self) -> str:
         return (f"Technician(id={self.id}, name={self.name!r}, hospital_id={self.hospital_id})")

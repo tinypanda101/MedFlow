@@ -12,7 +12,7 @@ from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
-from app.models import EquipmentStatus
+from .enums import EquipmentStatus
 
 if TYPE_CHECKING:
     from .hospital import Hospital
@@ -40,7 +40,8 @@ class Equipment(Base):
 
     #Do relationships here
     hospital: Mapped["Hospital"] = relationship(back_populates="equipments")
-    work_order: Mapped["Work_Order"] = relationship(back_populates="equipments")
+    work_orders: Mapped[list["Work_Order"]] = relationship(back_populates="equipment")
+
     #Future methods go here
 
 

@@ -11,11 +11,13 @@ from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+
+
 from .base import Base
 
 if TYPE_CHECKING:
     from .equipment import Equipment
-
+    from .technician import Technician
 
 #requries base from .base. Why? idk something to do with the ORM workings
 class Hospital(Base):
@@ -36,8 +38,12 @@ class Hospital(Base):
 
     #Creates the relationships with other tables
     #Will come back when others are created but this connects to equipment and maybe a technician table
+    #Use list if for instance here hospital has multiple equipment (ie list = one of one=to=many)
+    #Whichever side is the ForeignKey side is the Many side which points to "one" parent
+    #Mapped[Equipment] must match Equipment(class name in equipment.py)
+    #back_populates="hospital" must match the hospital: Mapped... on Equipment.py
     equipments: Mapped[list["Equipment"]] = relationship(back_populates="hospital")
-
+    technicians: Mapped[list["Technician"]] = relationship(back_populates="hospital")
 
     #its a ToString method but I am unsure the purpose of it?
     def __repr__(self) -> str:
