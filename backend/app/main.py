@@ -6,7 +6,7 @@ This file controls the entry point for the API, Build the fastapi object here an
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware #CORS is for later (midend connection stuff)
 
-from app.routers import equipment
+from app.routers import equipment, auth
 
 app = FastAPI(
     title = "Medflow Command Center",
@@ -21,7 +21,7 @@ app = FastAPI(
 
 #Include routers in API
 app.include_router(equipment.router)
-
+app.include_router(auth.router)
 
 #Sample health endpoint to validate connection
 @app.get("/health", tags = ['health'])

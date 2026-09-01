@@ -2,7 +2,7 @@
 Script that makes the tables and enum types
 
 run this from \backend directory with .venv enabled:
-    python -m scripts.create_tables.py
+    python -m scripts.create_tables
 """
 
 import asyncio

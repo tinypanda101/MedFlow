@@ -8,6 +8,7 @@ from .hospital import Hospital
 from .work_order import Work_Order
 from .technician import Technician
 from .service_report import Service_Report
+from .user import User
 #others as well
 
 __all__ = [
@@ -16,9 +17,10 @@ __all__ = [
     "OrderPriority",
     "OrderStatus",
     "UserRole",
+    "User",
     "Equipment",
     "Hospital",
     "Service_Report",
     "Work_Order",
-
+    "Technician",
 ]

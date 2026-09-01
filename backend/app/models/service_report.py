@@ -21,7 +21,7 @@ class Service_Report(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     #need mission id
-    work_order_id: Mapped[int] = mapped_column(Integer, ForeignKey("work_order.id"))
+    work_order_id: Mapped[int] = mapped_column(Integer, ForeignKey("work_orders.id"))
     file_url: Mapped[str] = mapped_column(Text)
     #Make it option add | None and nullable
     notes: Mapped[str | None] = mapped_column(Text, nullable = True)

@@ -22,9 +22,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import EquipmentStatus # User, UserRole #user/userrole are for RBAC later
+from app.models import EquipmentStatus, User, UserRole #user/userrole are for RBAC 
 from app.schemas.equipment import EquipmentCreate, EquipmentRead
-from app.dependencies import get_db # get_current_user, require_role #get_current and require are also RBAC later
+from app.dependencies import get_db, get_current_user, require_role #get_current and require are also RBAC
 from app.models import Equipment
 
 #Every request comes under /equipment
@@ -33,7 +33,7 @@ router = APIRouter(prefix = "/equipment", tags = ["equipment"])
 #This decorator says this goes to "/equipment" with nothing else and returns a list of EquipmentRead objects
 @router.get("", response_model= list[EquipmentRead])
 async def list_equipment(max_charge: Decimal | None = Query(default = None, ge=0, le=100, description="Only return equipment below this charge level"),
-                         db: AsyncSession = Depends(get_db)): #add RBAC here
+                         db: AsyncSession = Depends(get_db), _: User = Depends(get_current_user)):
     #Need to be able to interact with DB so we need session object to execute those statements
     #Dependent on the session object
 
@@ -52,7 +52,7 @@ async def list_equipment(max_charge: Decimal | None = Query(default = None, ge=0
 #Gets specific equipment by its id
 #GET /equipment/{equipment_id} is known as a PATH PARAMETER
 @router.get("/{equipment_id}", response_model= EquipmentRead)
-async def get_equipment(equipment_id: int, db:AsyncSession = Depends(get_db)): #RBAC add remember
+async def get_equipment(equipment_id: int, db:AsyncSession = Depends(get_db), _: User = Depends(get_current_user)): 
     equipment = await db.get(Equipment, equipment_id)
 
     if equipment is None:
@@ -64,7 +64,7 @@ async def get_equipment(equipment_id: int, db:AsyncSession = Depends(get_db)): #
 
 #POST requests are used for creating new resources or altering state
 @router.post("", response_model= EquipmentRead, status_code=status.HTTP_201_CREATED)
-async def create_equipment(payload: EquipmentCreate, db: AsyncSession = Depends(get_db)): #Remember RBAC later
+async def create_equipment(payload: EquipmentCreate, db: AsyncSession = Depends(get_db), _: User = Depends(require_role(UserRole.CLINICAL_ADMIN))):
     # ** converts a dict of data into invidivual arugments (ie very important)
     equipment = Equipment(**payload.model_dump())
 

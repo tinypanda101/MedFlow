@@ -17,4 +17,4 @@ DATABASE_URL = os.environ.get(
 engine = create_async_engine(DATABASE_URL, echo= True)
 
 #Expire_on_commit = false, prevents session from expiring objects after a commit
-ASyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
+AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)

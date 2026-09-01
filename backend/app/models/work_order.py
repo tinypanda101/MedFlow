@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .equipment import Equipment
 
 class Work_Order(Base):
-    __tablename__ = "work_order"
+    __tablename__ = "work_orders"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(150))

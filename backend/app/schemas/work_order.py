@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict
 
 from app.models import OrderPriority, OrderStatus
 
+
 class DiscrepancyRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
