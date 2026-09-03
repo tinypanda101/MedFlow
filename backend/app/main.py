@@ -4,7 +4,7 @@ This file controls the entry point for the API, Build the fastapi object here an
 """
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware #CORS is for later (midend connection stuff)
+from fastapi.middleware.cors import CORSMiddleware #(midend connection stuff)
 
 from app.routers import equipment, auth
 
@@ -15,7 +15,16 @@ app = FastAPI(
 )
 
 #CORS goes here
-
+app.add_middleware(
+    CORSMiddleware,
+    #The endpoint for our frontend
+    allow_origins=["http://localhost:5173"],
+    #This allows us to pass an Auth header (JWT)
+    allow_credentials=True,
+    #This allows all methods and headers through
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 
