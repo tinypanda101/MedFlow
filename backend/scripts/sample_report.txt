@@ -1,0 +1,3 @@
+Vibration Sensor: nominal
+Charge Cycle Count: 142
+Last Calibration: Within tolerance

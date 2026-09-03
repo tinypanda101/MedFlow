@@ -26,3 +26,13 @@ class OrderRead(BaseModel):
     equipment_id: int
     operator_id: int
     model_config = ConfigDict(from_attributes=True)
+
+class ModelRatioRead(BaseModel):
+    model: str
+    total: int
+    completed: int
+    failed: int
+    pending: int
+    completion_ratio: float | None # completed / completed+failed
+    failure_ratio: float | None # failed / completed+failed
+    model_config = ConfigDict(from_attributes=True)

@@ -28,7 +28,7 @@ INSERT INTO work_orders (id, title, priority, status, equipment_id, technician_i
     (4, 'Intern Teaching', 'Low', 'Failed', 4, 201);
 
 INSERT INTO service_report (work_order_id, file_url, notes) VALUES
-    (1, 's3://medflow-diagnostics/PR-1001.pdf', 'Turning it off and on again didnt work');
+    (1, 's3://medflow-reports-binx/reports/PR-1001.pdf', 'Turning it off and on again didnt work');
 
 SELECT setval('hospitals_id_seq', (SELECT MAX(id) FROM hospitals));
 SELECT setval('technicians_id_seq', (SELECT MAX(id) FROM technicians));

@@ -45,5 +45,12 @@ class Work_Order(Base):
     technician: Mapped["Technician"] = relationship(back_populates="work_orders")
     service_reports: Mapped[list["Service_Report"]] = relationship(back_populates="work_order")
 
+    def mark_completed(self) -> None:
+        self.status = OrderStatus.COMPLETED
+
+    def mark_failed(self) -> None:
+        self.status = OrderStatus.FAILED
+
+
     def __repr__(self) -> str:
         return (f"Work Order(id = {self.id}, title = {self.title!r}, priority = {self.priority.value}, status = {self.status.value} )")

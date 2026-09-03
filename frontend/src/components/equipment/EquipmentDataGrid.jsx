@@ -2,7 +2,8 @@
     EquipmentDataGrid is a React component that displays a list of equipment in a data grid format.
  */
 
-    import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+const LOW_CHARGE_THRESHOLD = 20; // Example threshold value for low charge
 import { DataGrid } from '@mui/x-data-grid';
 import { Alert, Box, CircularProgress } from '@mui/material';
 import apiClient from '../../api/client.js';
@@ -14,7 +15,7 @@ const columns = [
   { field: 'model', headerName: 'Model', width: 160 },
   { field: 'charge_level', headerName: 'Charge %', width: 120, type: 'number' },
   { field: 'status', headerName: 'Status', width: 130 },
-  { field: 'facility_id', headerName: 'Facility ID', width: 110, type: 'number' },
+  { field: 'hospital_id', headerName: 'Hospital ID', width: 110, type: 'number' },
 ];
 
 //local state variables for tracking table rows, loading status, and network errors
@@ -34,7 +35,8 @@ function EquipmentDataGrid() {
       try {
         const response = await apiClient.get('/equipment');
         if (isMounted) setEquipment(response.data);
-      } catch {
+      } catch (err) {
+        console.error('Equipment fetch failed:', err);
         if (isMounted) setError('Could not load equipment data.');
       } finally {
         if (isMounted) setLoading(false);
@@ -55,8 +57,8 @@ function EquipmentDataGrid() {
 
   //loads data grid component if all goes well
   return (
-    <Box sx={{ height: 400, width: '100%' }}>
-      <DataGrid rows={equipment} columns={columns} getRowId={(row) => row.id} />
+    <Box sx={{ height: 400, width: '100%', '& .low-charge-row' : {bgcolor: 'warning.light', '&:hover' : {bgcolor: 'warning.main'},},}}>
+      <DataGrid rows={equipment} columns={columns} getRowId={(row) => row.id} getRowClassName={(params) => Number(params.row.charge_level) < LOW_CHARGE_THRESHOLD ? 'low-charge-row' : ''} />
     </Box>
   );
 }

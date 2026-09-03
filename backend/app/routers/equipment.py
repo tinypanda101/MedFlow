@@ -68,7 +68,7 @@ async def create_equipment(payload: EquipmentCreate, db: AsyncSession = Depends(
     # ** converts a dict of data into invidivual arugments (ie very important)
     equipment = Equipment(**payload.model_dump())
 
-    db.add(Equipment)
+    db.add(equipment)
     await db.commit()
     await db.refresh(equipment)
     return equipment

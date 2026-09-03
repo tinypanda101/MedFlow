@@ -11,14 +11,14 @@ const LOW_CHARGE_THRESHOLD = 20; // Example threshold value for low charge
 //For now doing what Robopulse looks like if bored later might change it
 
 function EquipmentCard({ equipment }) {
-    const isLowCharge = equipment.chargelevel < LOW_CHARGE_THRESHOLD;
+    const isLowCharge = equipment.charge_level < LOW_CHARGE_THRESHOLD;
 
     return (
     <Card variant="outlined" sx={{ minWidth: 240 }}>
       <CardContent>
         {/* The Typography component lets us display text with different styles.*/}
         <Typography variant="h6" component="div">
-          {equipment.serialNumber}
+          {equipment.serial_number}
         </Typography>
         <Typography color="text.secondary" gutterBottom>
           {equipment.model}
@@ -27,7 +27,7 @@ function EquipmentCard({ equipment }) {
         <Stack direction="row" spacing={1} alignItems="center">
         {/* The Chip component is a small, interactive element that can display information or trigger actions.*/}
           <Chip
-            label={`${equipment.chargelevel}% battery`}
+            label={`${equipment.charge_level}% battery`}
             color={isLowCharge ? 'error' : 'success'}
             size="small"
           />

@@ -4,8 +4,11 @@ import AppHeader from './components/layout/AppHeader.jsx'
 
 import LoginForm from './components/auth/LoginForm.jsx';
 import EquipmentDataGrid from './components/equipment/EquipmentDataGrid.jsx';
+import ActiveTechniciansDataGrid from './components/technician/ReportingLinesDataGrid.jsx';
 import { AuthProvider,useAuth } from './context/AuthContext.jsx';
-// import DiscrepancyDataGrid from './components/missions/DiscrepancyDataGrid.jsx'; uncomment when we add DiscrepancyDataGrid component
+import DiscrepancyDataGrid from './components/work_orders/DiscrepancyDataGrid.jsx'; 
+import ReliabilityDataGrid from './components/work_orders/RatioDataGrid.jsx';
+import MaintenanceFlagsDataGrid from './components/hospital/MaintenanceFlagsDataGrid.jsx';
 
 // A main dashboard component that renders the application header and robot data grid to authenticated users
 function Dashboard(){
@@ -25,9 +28,27 @@ function Dashboard(){
         <Typography variant = 'h5' component = 'h2' gutterBottom>
           Co-Location Discrepancies
         </Typography>
-        {/* <Box sx = {{mb : 4}}>
+         <Box sx = {{mb : 4}}>
           <DiscrepancyDataGrid/>
-        </Box> */}
+        </Box>
+        <Typography variant='h5' component='h2' gutterBottom>
+          Reliability Metrics
+        </Typography>
+        <Box sx={{mb: 4}}>
+          <ReliabilityDataGrid />
+        </Box>
+        <Typography variant='h5' component='h2' gutterBottom>
+          Maintenance Flags
+        </Typography>
+        <Box sx={{mb: 4}}>
+          <MaintenanceFlagsDataGrid />
+        </Box>
+        <Typography variant='h5' component='h2' gutterBottom>
+          Active Technicians by Supervisor
+        </Typography>
+        <Box sx={{mb: 4}}>
+          <ActiveTechniciansDataGrid />
+        </Box>
       </Container>
 
       <Snackbar
