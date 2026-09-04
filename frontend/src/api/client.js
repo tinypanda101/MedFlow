@@ -6,7 +6,7 @@ import axios from 'axios';
 
 // Axios.create is a function that builds a reusable pre-configed client
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8000', // FastAPI backend URL
+    baseURL: import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 });
 
 //Request interceptor runs on every outing request and checks if a token exists in local storage

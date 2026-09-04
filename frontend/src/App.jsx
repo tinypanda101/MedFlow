@@ -9,6 +9,7 @@ import { AuthProvider,useAuth } from './context/AuthContext.jsx';
 import DiscrepancyDataGrid from './components/work_orders/DiscrepancyDataGrid.jsx'; 
 import ReliabilityDataGrid from './components/work_orders/RatioDataGrid.jsx';
 import MaintenanceFlagsDataGrid from './components/hospital/MaintenanceFlagsDataGrid.jsx';
+import ServiceReportUpload from './components/service_report/ServiceReportUpload.jsx';
 
 // A main dashboard component that renders the application header and robot data grid to authenticated users
 function Dashboard(){
@@ -48,6 +49,12 @@ function Dashboard(){
         </Typography>
         <Box sx={{mb: 4}}>
           <ActiveTechniciansDataGrid />
+        </Box>
+        <Typography variant='h5' component='h2' gutterBottom>
+          Upload Service Report
+        </Typography>
+        <Box sx={{ mb: 4 }}>
+          <ServiceReportUpload />
         </Box>
       </Container>
 
