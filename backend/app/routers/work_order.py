@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.dependencies import get_db, require_role
+from app.dependencies import get_db, require_role, get_current_user
 from app.models import OrderPriority, OrderStatus, UserRole
 from app.schemas.work_order import ModelRatioRead, OrderStatusUpdate, OrderRead, DiscrepancyRead, OrderCreate
 from app.models import Equipment, Work_Order, Technician
@@ -9,13 +9,38 @@ from app.models.user import User
 
 router = APIRouter(prefix = "/orders", tags = ["orders"])
 
+#Get all work orders
+@router.get("", response_model=list[OrderRead])
+async def list_work_orders(
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    statement = select(Work_Order)
+    result = await db.execute(statement)
+    return list(result.scalars().all())
+
+#Get specific work order by id
+@router.get("/{work_order_id}", response_model=OrderRead)
+async def get_work_order(
+    work_order_id: int,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    order = await db.get(Work_Order, work_order_id)
+    if order is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Work order with ID {work_order_id} not found",
+        )
+    return order
+
 
 # Get colocation discrepancies endpoint
 @router.get("/discrepancies", response_model=list[DiscrepancyRead])
 async def get_colocation_discrepancies(
     db: AsyncSession = Depends(get_db),
     priority: OrderPriority | None = None,
-    _: User = Depends(require_role(UserRole.CLINICAL_ADMIN, UserRole.FIELD_TECHNICIAN, UserRole.AUDITOR)),
+    _: User = Depends(get_current_user),
 ):
     statement = (
         select (
@@ -39,11 +64,10 @@ async def get_colocation_discrepancies(
     return [dict(row) for row in result.mappings().all()]
 
 # Finds completion/failure ratio by device model
-
 @router.get("/ratios", response_model=list[ModelRatioRead])
 async def get_model_ratios(
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_role(UserRole.CLINICAL_ADMIN, UserRole.FIELD_TECHNICIAN, UserRole.AUDITOR)),
+    _: User = Depends(get_current_user),
 ):
     completed = func.count(
         case((Work_Order.status == OrderStatus.COMPLETED, Work_Order.id))
@@ -120,6 +144,32 @@ async def update_order_status(
     await db.refresh(order)
     return order
 
+#General update endpoint for work orders
+@router.put("/{work_order_id}", response_model=OrderRead)
+async def update_work_order(
+    work_order_id: int,
+    payload: OrderCreate,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role(UserRole.CLINICAL_ADMIN)),
+):
+    order = await db.get(Work_Order, work_order_id)
+    if order is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Work order with ID {work_order_id} not found",
+        )
+
+    update_data = payload.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(order, field, value)
+
+    db.add(order)
+    await db.commit()
+    await db.refresh(order)
+    return order
+
+
+#Create
 @router.post("", response_model=OrderRead, status_code=status.HTTP_201_CREATED)
 async def create_work_order(
     payload: OrderCreate,
@@ -131,4 +181,22 @@ async def create_work_order(
     await db.commit()
     await db.refresh(order)
     return order
+
+
+#Delete
+@router.delete("/{work_order_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_work_order(
+    work_order_id: int,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role(UserRole.CLINICAL_ADMIN)),
+):
+    order = await db.get(Work_Order, work_order_id)
+    if order is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Work order with ID {work_order_id} not found",
+        )
  
+    await db.delete(order)
+    await db.commit()
+    return None

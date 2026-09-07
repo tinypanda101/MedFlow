@@ -11,7 +11,7 @@ import ReliabilityDataGrid from './components/work_orders/RatioDataGrid.jsx';
 import MaintenanceFlagsDataGrid from './components/hospital/MaintenanceFlagsDataGrid.jsx';
 import ServiceReportUpload from './components/service_report/ServiceReportUpload.jsx';
 
-// A main dashboard component that renders the application header and robot data grid to authenticated users
+// A main dashboard component that renders the application header and data grid to authenticated users
 function Dashboard(){
   //store the current user object and logout function from the global AuthContext
   const {user, logout} = useAuth();

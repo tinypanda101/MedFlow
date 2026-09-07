@@ -15,7 +15,7 @@ DELETE /equipment/3 -> Delete equipment with id=3
 Query parameter (This is getting replaced with the new http method):
 GET /equipment?max_charge=20 -> gets all equipment where max battery is 20
 """
-
+#CRUD = CREATE READ UPDATE DELETE 
 
 from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -30,6 +30,7 @@ from app.models import Equipment
 #Every request comes under /equipment
 router = APIRouter(prefix = "/equipment", tags = ["equipment"])
 
+#GET ALL
 #This decorator says this goes to "/equipment" with nothing else and returns a list of EquipmentRead objects
 @router.get("", response_model= list[EquipmentRead])
 async def list_equipment(max_charge: Decimal | None = Query(default = None, ge=0, le=100, description="Only return equipment below this charge level"),
@@ -49,6 +50,7 @@ async def list_equipment(max_charge: Decimal | None = Query(default = None, ge=0
     #scalars() basically makes it cleaner than a bulky database query result
     return list(result.scalars().all())
 
+#GET SPECIFIC
 #Gets specific equipment by its id
 #GET /equipment/{equipment_id} is known as a PATH PARAMETER
 @router.get("/{equipment_id}", response_model= EquipmentRead)
@@ -62,6 +64,7 @@ async def get_equipment(equipment_id: int, db:AsyncSession = Depends(get_db), _:
         )
     return equipment
 
+#CREATE
 #POST requests are used for creating new resources or altering state
 @router.post("", response_model= EquipmentRead, status_code=status.HTTP_201_CREATED)
 async def create_equipment(payload: EquipmentCreate, db: AsyncSession = Depends(get_db), _: User = Depends(require_role(UserRole.CLINICAL_ADMIN))):
@@ -76,7 +79,9 @@ async def create_equipment(payload: EquipmentCreate, db: AsyncSession = Depends(
 
 
 #for every new endpoint put either _: User = Depends(get_current_user) or if you want only specific roles _:User = Depends(require_role(UserRole.<Role>))
-# --- PUT /equipment/{equipment_id} : update an existing device ---------------
+
+
+#UPDATE
 @router.put("/{equipment_id}", response_model=EquipmentRead)
 async def update_equipment(
     equipment_id: int,
@@ -101,8 +106,7 @@ async def update_equipment(
     await db.refresh(equipment)
     return equipment
  
- 
-# --- DELETE /equipment/{equipment_id} : remove a device ----------------------
+ #DELETE
 @router.delete("/{equipment_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_equipment(
     equipment_id: int,

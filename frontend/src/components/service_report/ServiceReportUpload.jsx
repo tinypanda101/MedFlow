@@ -24,8 +24,7 @@ function ServiceReportUpload({ onUploaded }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  // Role gate. user.role comes from the decoded JWT (see AuthContext).
-  // If your UserRole values serialize differently, adjust UPLOAD_ROLES.
+
   if (!user || !UPLOAD_ROLES.includes(user.role)) {
     return null;
   }
@@ -50,11 +49,10 @@ function ServiceReportUpload({ onUploaded }) {
       setWorkOrderId('');
       setNotes('');
       setFile(null);
-      // Let a parent refresh a reports grid if it wants to.
+      
       if (onUploaded) onUploaded(response.data);
     } catch (err) {
-      // Surface the backend's detail (404 unknown work order, 400 bad type,
-      // 502 S3 failure) rather than a generic message.
+      
       const detail = err.response?.data?.detail;
       setError(detail || 'Upload failed. Check the work order ID and file type.');
     } finally {
