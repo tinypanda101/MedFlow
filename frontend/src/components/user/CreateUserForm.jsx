@@ -22,8 +22,8 @@ function CreateUserForm({ onCreated }) {
       setFeedback({ severity: 'warning', message: 'Username must be at least 3 characters.' });
       return;
     }
-    if (password.length < 8) {
-      setFeedback({ severity: 'warning', message: 'Password must be at least 8 characters.' });
+    if (password.length < 3) {
+      setFeedback({ severity: 'warning', message: 'Password must be at least 3 characters.' });
       return;
     }
     if (!role) {

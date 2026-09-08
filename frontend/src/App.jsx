@@ -19,10 +19,10 @@ function Dashboard(){
     <>
       <AppHeader username = {user?.sub} role={user?.role} onLogout={logout} />
 
-      <Box se={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
         <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)}>
           <Tab label="Overview" value="overview" />
-          {isTech || isAdmin && <Tab label="Tech Panel" value="tech_panel" />}
+          {(isTech || isAdmin) && <Tab label="Tech Panel" value="tech_panel" />}
           {isAdmin && <Tab label="Admin Panel" value="admin_panel" />}
         </Tabs>
       </Box>
