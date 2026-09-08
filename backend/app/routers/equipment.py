@@ -26,6 +26,7 @@ from app.models import EquipmentStatus, User, UserRole #user/userrole are for RB
 from app.schemas.equipment import EquipmentCreate, EquipmentRead, EquipmentUpdate
 from app.dependencies import get_db, get_current_user, require_role #get_current and require are also RBAC
 from app.models import Equipment
+from app.models.work_order import Work_Order
 
 #Every request comes under /equipment
 router = APIRouter(prefix = "/equipment", tags = ["equipment"])
@@ -49,6 +50,18 @@ async def list_equipment(max_charge: Decimal | None = Query(default = None, ge=0
 
     #scalars() basically makes it cleaner than a bulky database query result
     return list(result.scalars().all())
+
+#Gets by tech id
+@router.get("/technicians", response_model=list[EquipmentRead])
+async def list_equipment(technician_id: int | None = None, db: AsyncSession = Depends(get_db)):
+    statement = select(Equipment)
+    if technician_id is not None:
+        statement = statement.join(Work_Order, Work_Order.equipment_id == Equipment.id).where(Work_Order.technician_id == technician_id).distinct()
+    result = await db.execute(statement)
+    return list(result.scalars().all())
+
+
+
 
 #GET SPECIFIC
 #Gets specific equipment by its id

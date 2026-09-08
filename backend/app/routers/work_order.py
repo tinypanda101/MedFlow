@@ -19,20 +19,6 @@ async def list_work_orders(
     result = await db.execute(statement)
     return list(result.scalars().all())
 
-#Get specific work order by id
-@router.get("/{work_order_id}", response_model=OrderRead)
-async def get_work_order(
-    work_order_id: int,
-    db: AsyncSession = Depends(get_db),
-    _: User = Depends(get_current_user),
-):
-    order = await db.get(Work_Order, work_order_id)
-    if order is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Work order with ID {work_order_id} not found",
-        )
-    return order
 
 
 # Get colocation discrepancies endpoint
@@ -117,6 +103,21 @@ async def get_model_ratios(
             }
         )
     return payload
+
+#Get specific work order by id
+@router.get("/{work_order_id}", response_model=OrderRead)
+async def get_work_order(
+    work_order_id: int,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    order = await db.get(Work_Order, work_order_id)
+    if order is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Work order with ID {work_order_id} not found",
+        )
+    return order
 
 # Update order status endpoint
 @router.patch("/{work_order_id}/status", response_model=OrderRead,)

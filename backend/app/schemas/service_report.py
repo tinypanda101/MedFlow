@@ -12,3 +12,6 @@ class ServiceReportRead(BaseModel):
     timestamp: datetime
     model_config = ConfigDict(from_attributes=True)
  
+class ServiceReportUpdate(BaseModel):
+    notes: str | None = None
+    model_config = ConfigDict(from_attributes=True)

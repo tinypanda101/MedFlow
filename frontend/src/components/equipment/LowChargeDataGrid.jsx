@@ -1,11 +1,8 @@
-/*
-    EquipmentDataGrid is a React component that displays a list of equipment in a data grid format.
- */
 
 import { useEffect, useState } from 'react';
 const LOW_CHARGE_THRESHOLD = 20; // Example threshold value for low charge
 import { DataGrid } from '@mui/x-data-grid';
-import { Alert, Box, CircularProgress, TextField } from '@mui/material';
+import { Alert, Box, CircularProgress } from '@mui/material';
 import apiClient from '../../api/client.js';
 
 //defines our DataGrid columns and maps them to our backend API response data
@@ -20,28 +17,27 @@ const columns = [
 
 //local state variables for tracking table rows, loading status, and network errors
 //to track the lifecycle of the async API request so the UI can render appropriately
-function EquipmentDataGrid() {
+function LowChargeDataGrid() {
   const [equipment, setEquipment] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [techId, setTechId] = useState('');
 
+  //React effect hook that runs our async fetch 
   useEffect(() => {
+    //tracks component mount status to prevent memory leaks via network request delays
     let isMounted = true;
-    const controller = new AbortController();
 
+    //pulls our robot fleet data from our backend
     async function fetchEquipment() {
-      setLoading(true);
-      setError(null);
       try {
-        const params = techId.trim() ? { technician_id: techId.trim() } : {};
-        const response = await apiClient.get('/equipment/technicians', {
-          params,
-          signal: controller.signal,
-        });
-        if (isMounted) setEquipment(response.data);
+        const response = await apiClient.get('/equipment');
+        if (isMounted) {
+            const lowCharge = response.data.filter(
+                (item) => Number(item.charge_level) < LOW_CHARGE_THRESHOLD
+            );
+            setEquipment(lowCharge);
+        }
       } catch (err) {
-        if (err.name === 'CanceledError' || err.name === 'AbortError') return;
         console.error('Equipment fetch failed:', err);
         if (isMounted) setError('Could not load equipment data.');
       } finally {
@@ -49,34 +45,24 @@ function EquipmentDataGrid() {
       }
     }
 
-    const debounce = setTimeout(fetchEquipment, 400);
+    fetchEquipment();
 
     return () => {
       isMounted = false;
-      controller.abort();
-      clearTimeout(debounce);
     };
-  }, [techId]);
+  }, []);
 
+  //shows a spinning progress indicator if loading data
+  if (loading) return <CircularProgress />;
+  //shows error alert if API call fails
+  if (error) return <Alert severity="error">{error}</Alert>;
+
+  //loads data grid component if all goes well
   return (
-    <Box sx={{ width: '100%' }}>
-      <TextField
-        label="Filter by Technician ID"
-        variant="outlined"
-        size="small"
-        value={techId}
-        onChange={(e) => setTechId(e.target.value)}
-        sx={{ mb: 2 }}
-      />
-      {loading && <CircularProgress />}
-      {error && <Alert severity="error">{error}</Alert>}
-      {!loading && !error && (
-        <Box sx={{ height: 400, width: '100%' }}>
-          <DataGrid rows={equipment} columns={columns} getRowId={(row) => row.id} />
-        </Box>
-      )}
+    <Box sx={{ height: 400, width: '100%' }}>
+      <DataGrid rows={equipment} columns={columns} getRowId={(row) => row.id} />
     </Box>
   );
 }
 
-export default EquipmentDataGrid;
+export default LowChargeDataGrid;

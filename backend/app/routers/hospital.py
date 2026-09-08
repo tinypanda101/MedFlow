@@ -63,7 +63,7 @@ async def get_maintenance_flags(
     ]
 
 #Create here
-@router.post("", response_model=HospitalCreate, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=HospitalRead, status_code=status.HTTP_201_CREATED)
 async def create_hospital(
     payload: HospitalCreate,
     db: AsyncSession = Depends(get_db),

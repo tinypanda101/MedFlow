@@ -23,22 +23,6 @@ async def list_technicians(
     result = await db.execute(statement)
     return list(result.scalars().all())
 
-#Get tech by id
-@router.get("/{technician_id}", response_model=TechnicianRead)
-async def get_technician(
-    technician_id: int,
-    db: AsyncSession = Depends(get_db),
-    _: User = Depends(get_current_user),
-):
-    technician = await db.get(Technician, technician_id)
-    if technician is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Technician {technician_id} not found",
-        )
-    return technician
-
-
 
 @router.get("/active", response_model=list[SupervisorActiveTechRead])
 async def get_active_technicians_by_supervisor(
@@ -67,6 +51,25 @@ async def get_active_technicians_by_supervisor(
         }
         for row in rows
     ] 
+
+
+#Get tech by id
+@router.get("/{technician_id}", response_model=TechnicianRead)
+async def get_technician(
+    technician_id: int,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    technician = await db.get(Technician, technician_id)
+    if technician is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Technician {technician_id} not found",
+        )
+    return technician
+
+
+
 
 #Create a new technician
 @router.post("", response_model=TechnicianRead, status_code=201)

@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
  
 from app.dependencies import get_db, require_role, get_current_user
 from app.models import Service_Report, User, UserRole, Work_Order
-from app.schemas.service_report import ServiceReportRead
+from app.schemas.service_report import ServiceReportRead, ServiceReportUpdate
  
 router = APIRouter(prefix="/reports", tags=["reports"])
  
@@ -115,7 +115,7 @@ async def upload_service_report(
 @router.put("/{report_id}", response_model=ServiceReportRead)
 async def update_service_report(
     report_id: int,
-    payload: ServiceReportRead,
+    payload: ServiceReportUpdate,
     db: AsyncSession = Depends(get_db),
     _: User = Depends(require_role(UserRole.CLINICAL_ADMIN)),
 ):
