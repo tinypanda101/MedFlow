@@ -13,7 +13,7 @@ function AppHeader({username,role,onLogout}) {
             <Toolbar>
                 <PrecisionManufacturingIcon sx={{ mr: 2 }} />
                 <Typography variant="h6" component="h1">
-                    MedFlow Clinical Equipment Command Center
+                    MedFlow Clinical Equipment Command Center 
                 </Typography>
                 {/* Display username and role, and provide a logout button */}
                 {username && (

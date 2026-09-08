@@ -36,6 +36,16 @@ async def login(
     access_token = create_access_token(data={"sub": user.username, "role": user.role.value})
     return Token(access_token=access_token, token_type="bearer")
 
+#fetch users
+@router.get("/users", response_model=list[UserRead])
+async def list_users(
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role(UserRole.CLINICAL_ADMIN)),
+):
+    statement = select(User)
+    result = await db.execute(statement)
+    return list(result.scalars().all())
+
 
 #function to register a new user, will require the admin role to use
 @router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)

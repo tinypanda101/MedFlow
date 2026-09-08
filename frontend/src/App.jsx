@@ -12,6 +12,7 @@ function Dashboard(){
   //store the current user object and logout function from the global AuthContext
   const {user, logout} = useAuth();
   const isAdmin = user?.role === 'Clinical_Admin';
+  const isTech = user?.role === 'Field_Technician';
   const [activeTab, setActiveTab] = useState('overview');
   const [notification, setNotification] = useState(null);
   return (
@@ -21,7 +22,7 @@ function Dashboard(){
       <Box se={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
         <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)}>
           <Tab label="Overview" value="overview" />
-          <Tab label="Tech Panel" value="tech_panel" />
+          {isTech || isAdmin && <Tab label="Tech Panel" value="tech_panel" />}
           {isAdmin && <Tab label="Admin Panel" value="admin_panel" />}
         </Tabs>
       </Box>
